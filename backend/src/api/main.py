@@ -1,9 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.models.predict import predict_single
 
 app = FastAPI(title="Telecom Churn Prediction API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class CustomerData(BaseModel):
@@ -40,5 +52,4 @@ def health():
 
 @app.post("/predict")
 def predict(data: CustomerData):
-    result = predict_single(data.dict())
-    return result
+    return predict_single(data.dict())
